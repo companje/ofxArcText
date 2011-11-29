@@ -1,37 +1,65 @@
 #include "ofxArcText.h"
 
 ofxArcText::ofxArcText() {
-    align = OFX_ALIGN_CENTER;
-    radius = 1;
-    text = "";
-    color = ofColor::white;
-    nTimes = 1;
-    visible = true;
+    align = CENTER;
+    showDebug = true;
 }
 
-void ofxArcText::customDraw() { 
-    float radius = this->radius / getScale().x; //local
+float ofxArcText::getCharacterWidth(char ch) {
+    if (ch==' ') ch='i';
+    return cps[ch-NUM_CHARACTER_TO_START].setWidth;
+}
 
-    for (int i=0; i<nTimes; i++) {
-        
+void ofxArcText::drawString(string text, float x, float y, float radius) {
+    
+    ofPushMatrix();
+    ofTranslate(x,y);
+    
+    float angles[text.length()];
+    float widths[text.length()];
+    float totalAngle = 0;
+    
+    for (int i=0; i<text.length(); i++) {
+        widths[i] = getCharacterWidth(text.at(i)) * letterSpacing;
+        angles[i] = atan(widths[i]/radius);
+        totalAngle += angles[i];
+    }
+    
+    switch (align) {
+        case LEFT: break;
+        case CENTER: ofRotateZ(ofRadToDeg(totalAngle/2)); break;
+        case RIGHT: ofRotateZ(ofRadToDeg(totalAngle)); break;
+    }
+
+    if (showDebug) {
+        ofNoFill();
+        ofCircle(0,0,radius);
+        ofLine(0,0,0,radius);
         ofPushMatrix();
-        ofRotateZ(360/nTimes*i);
-
-        switch (align) {
-            case OFX_ALIGN_LEFT: ofRotateZ(0); break;
-            case OFX_ALIGN_CENTER: ofRotateZ(ofRadToDeg(atan((stringWidth(text)/2) / radius))); break;
-            case OFX_ALIGN_RIGHT: ofRotateZ(2*ofRadToDeg(atan((stringWidth(text)/2) / radius))); break;
-        }
-
         for (int i=0; i<text.length(); i++) {
-            char ch = text.at(i)==' ' ? 'i' : text.at(i);
-            float opposite = cps[ch-NUM_CHARACTER_TO_START].setWidth / 2;
-            ofRotateZ(-ofRadToDeg(atan(opposite/radius)));
-            ofSetColor(color);
-            drawString(ofxToString(text.at(i)),-opposite,radius);
-            ofRotateZ(-ofRadToDeg(atan(opposite/radius)));
+            ofRotateZ(-ofRadToDeg(angles[i]));
+            ofLine(0,0,0,radius);
         }
-        
         ofPopMatrix();
     }
+    
+    for (int i=0; i<text.length(); i++) {
+        ofPushMatrix();
+        ofTranslate(0, radius);
+        ofRotateZ(-ofRadToDeg(angles[i])/2); //local rotation, use this or center letter before rotating
+        ofTrueTypeFont::drawString(ofToString((char)text.at(i)),0,0);
+        ofPopMatrix();
+        ofRotateZ(-ofRadToDeg(angles[i]));
+    }
+
+    ofPopMatrix();
+
+    //for (int i=0; i<text.length(); i++) {
+    //    float opposite = getCharacterWidth(text.at(i)) * letterSpacing;
+    //    float angle = atan(opposite/radius) / 2;
+    //    ofRotateZ(-ofRadToDeg(angle));
+    //    string s = ofToString((char)text.at(i));
+    //    ofTrueTypeFont::drawString(s,-widths[i]/2,radius);
+    //    ofRotateZ(-ofRadToDeg(angle));
+    //}
 }

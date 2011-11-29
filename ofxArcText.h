@@ -1,21 +1,15 @@
 #pragma once
 
-#include "ofxExtras.h"
+#include "ofMain.h"
 
-class ofxArcText : public ofNode, public ofTrueTypeFont {
+class ofxArcText : public ofTrueTypeFont {
 public:
 
     ofxArcText();
-    void customDraw();
     
-    float radius;
-    int align;
-    int nTimes;
-    bool visible;
-    
-    string text;    
-    ofColor color;
+    void drawString(string s, float x, float y, float radius);
+    float getCharacterWidth(char ch);
 
-    vector<string> textValues;
-    vector<string> colorValues;
+    enum { LEFT, CENTER, RIGHT } align;
+    bool showDebug;
 };
