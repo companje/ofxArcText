@@ -2,7 +2,7 @@
 
 ofxArcText::ofxArcText() {
     align = CENTER;
-    showDebug = true;
+    showDebug = false;
 }
 
 float ofxArcText::getCharacterWidth(char ch) {
