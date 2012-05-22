@@ -10,7 +10,11 @@ float ofxArcText::getCharacterWidth(char ch) {
     return cps[ch-NUM_CHARACTER_TO_START].setWidth;
 }
 
-void ofxArcText::drawString(string text, float x, float y, float radius) {
+void ofxArcText::drawStringAsShapes(string text, float x, float y, float radius) {
+    drawString(text,x,y,radius,true);
+}
+
+void ofxArcText::drawString(string text, float x, float y, float radius, bool asShapes) {
     
     ofPushMatrix();
     ofTranslate(x,y);
@@ -47,7 +51,8 @@ void ofxArcText::drawString(string text, float x, float y, float radius) {
         ofPushMatrix();
         ofTranslate(0, radius);
         ofRotateZ(-ofRadToDeg(angles[i])/2); //local rotation, use this or center letter before rotating
-        ofTrueTypeFont::drawString(ofToString((char)text.at(i)),0,0);
+        if (asShapes) ofTrueTypeFont::drawStringAsShapes(ofToString((char)text.at(i)),0,0);
+        else ofTrueTypeFont::drawString(ofToString((char)text.at(i)),0,0);
         ofPopMatrix();
         ofRotateZ(-ofRadToDeg(angles[i]));
     }
