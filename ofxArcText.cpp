@@ -6,16 +6,39 @@ ofxArcText::ofxArcText() {
 }
 
 float ofxArcText::getCharacterWidth(char ch) {
-    if (ch==' ') ch='i';
-    return cps[ch-NUM_CHARACTER_TO_START].setWidth;
+    return stringWidth(ofToString(ch==' '?'p':ch));
+    //return cps[ch-NUM_CHARACTER_TO_START].setWidth;
 }
 
 void ofxArcText::drawStringAsShapes(string text, float x, float y, float radius) {
     drawString(text,x,y,radius,true);
 }
 
-void ofxArcText::drawString(string text, float x, float y, float radius, bool asShapes) {
+int ofxArcText::getLength(string s) { //corrected for 3 bytes UTF-8 characters
+    //count the number of special chars (3 bytes) in the string
+    int total = 0;
+    for (int i=0; i<s.length(); i++) {
+        if (s.at(i)<0) total++;
+    }
+    total/=3; //3 bytes per special char
+    return s.length()-total*2; //subtract 2 of the length for each special char
+}
+
+string ofxArcText::getChar(string s, int pos) {
+    string letter;
+    int cur=0;
     
+    for (int i=0; i<s.length(); i++) {
+        letter += ofToString(s.at(i)); //add char to (multibyte) string 
+        if (s.at(i)>0 || letter.size()>=3) {
+            if (cur==pos) return letter;
+            letter = "";
+            cur++;
+        }
+    }
+}
+
+void ofxArcText::drawString(string text, float x, float y, float radius, bool asShapes) {
     ofPushMatrix();
     ofTranslate(x,y);
     
@@ -23,8 +46,14 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
     float widths[text.length()];
     float totalAngle = 0;
     
+//    setLetterSpacing(1.1);
+//    cout << letterSpacing << endl;
+    
+//    /letterSpacing * spaceSize
+    
     for (int i=0; i<text.length(); i++) {
-        widths[i] = getCharacterWidth(text.at(i)) * letterSpacing;
+        string ch = getChar(text,i);
+        widths[i] = stringWidth(ch==" " ? "p" : ch) * 1.2; //+ letterSpacing; //getCharacterWidth(text.at(i)) + letterSpacing;
         angles[i] = atan(widths[i]/radius);
         totalAngle += angles[i];
     }
@@ -51,8 +80,8 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
         ofPushMatrix();
         ofTranslate(0, radius);
         ofRotateZ(-ofRadToDeg(angles[i])/2); //local rotation, use this or center letter before rotating
-        if (asShapes) ofTrueTypeFont::drawStringAsShapes(ofToString((char)text.at(i)),0,0);
-        else ofTrueTypeFont::drawString(ofToString((char)text.at(i)),0,0);
+        if (asShapes) ofxTrueTypeFontUC::drawStringAsShapes(ofToString(getChar(text,i)),0,0);
+        else ofxTrueTypeFontUC::drawString(ofToString(getChar(text,i)),0,0);
         ofPopMatrix();
         ofRotateZ(-ofRadToDeg(angles[i]));
     }
