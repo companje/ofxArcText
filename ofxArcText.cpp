@@ -3,10 +3,15 @@
 ofxArcText::ofxArcText() {
     align = CENTER;
     showDebug = false;
+    antiAliasingScale = 2;
+}
+
+void ofxArcText::loadFont(string filename, int fontsize, bool _bAntiAliased, bool _bFullCharacterSet, bool makeContours, float simplifyAmt, int dpi) {
+    //font is loaded twice as big as requested to perform a much better anti-aliasing
+    ofTrueTypeFont::loadFont(filename, fontsize*antiAliasingScale, _bAntiAliased, _bFullCharacterSet, makeContours, simplifyAmt, dpi);
 }
 
 float ofxArcText::getCharacterWidth(char ch) {
-    //return 20;
     if (ch==' ') ch='i';
     return cps[ch-NUM_CHARACTER_TO_START].setWidth;
 }
@@ -16,9 +21,13 @@ void ofxArcText::drawStringAsShapes(string text, float x, float y, float radius)
 }
 
 void ofxArcText::drawString(string text, float x, float y, float radius, bool asShapes) {
-    
     ofPushMatrix();
+    ofScale(1/antiAliasingScale,1/antiAliasingScale);
     ofTranslate(x,y);
+    
+    radius*=antiAliasingScale;
+    x*=antiAliasingScale;
+    y*=antiAliasingScale;
     
     float angles[text.length()];
     float widths[text.length()];
@@ -36,18 +45,25 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
         case RIGHT: ofRotateZ(ofRadToDeg(totalAngle)); break;
     }
 
+    //draw debug lines
     if (showDebug) {
+        ofPushMatrix();
+        ofPushStyle();
         ofNoFill();
         ofCircle(0,0,radius);
+        ofSetColor(255,0,0);
         ofLine(0,0,0,radius);
-        ofPushMatrix();
-        for (int i=0; i<text.length(); i++) {
-            ofRotateZ(-ofRadToDeg(angles[i]));
+        for (int i=1; i<=text.length(); i++) {
+            ofRotateZ(-ofRadToDeg(angles[i-1]));
+            if (i==text.length()) ofSetColor(0,0,255);
+            else ofSetColor(0,200,0);
             ofLine(0,0,0,radius);
         }
+        ofPopStyle();
         ofPopMatrix();
     }
-    
+
+    //draw letters
     ofPushMatrix();
     for (int i=0; i<text.length(); i++) {
         ofPushMatrix();
@@ -59,16 +75,7 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
         ofPopMatrix();
         ofRotateZ(-ofRadToDeg(angles[i]));
     }
-    ofPopMatrix();
+    ofPopMatrix(); //draw letters
 
-    ofPopMatrix();
-
-    //for (int i=0; i<text.length(); i++) {
-    //    float opposite = getCharacterWidth(text.at(i)) * letterSpacing;
-    //    float angle = atan(opposite/radius) / 2;
-    //    ofRotateZ(-ofRadToDeg(angle));
-    //    string s = ofToString((char)text.at(i));
-    //    ofTrueTypeFont::drawString(s,-widths[i]/2,radius);
-    //    ofRotateZ(-ofRadToDeg(angle));
-    //}
+    ofPopMatrix(); //drawString
 }
