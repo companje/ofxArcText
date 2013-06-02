@@ -6,6 +6,7 @@ ofxArcText::ofxArcText() {
 }
 
 float ofxArcText::getCharacterWidth(char ch) {
+    //return 20;
     if (ch==' ') ch='i';
     return cps[ch-NUM_CHARACTER_TO_START].setWidth;
 }
@@ -47,6 +48,7 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
         ofPopMatrix();
     }
     
+    ofPushMatrix();
     for (int i=0; i<text.length(); i++) {
         ofPushMatrix();
         ofTranslate(0, radius);
@@ -57,6 +59,7 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
         ofPopMatrix();
         ofRotateZ(-ofRadToDeg(angles[i]));
     }
+    ofPopMatrix();
 
     ofPopMatrix();
 
