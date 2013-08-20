@@ -12,7 +12,7 @@ void ofxArcText::loadFont(string filename, int fontsize, bool _bAntiAliased, boo
 }
 
 float ofxArcText::getCharacterWidth(char ch) {
-    if (ch==' ') ch='i';
+    if (ch==' ') ch='.';
     return cps[ch-NUM_CHARACTER_TO_START].setWidth;
 }
 
@@ -24,21 +24,21 @@ void ofxArcText::drawString(string text, float x, float y, float radius, bool as
     ofPushMatrix();
     ofScale(1/antiAliasingScale,1/antiAliasingScale);
     ofTranslate(x,y);
-    
+
     radius*=antiAliasingScale;
     x*=antiAliasingScale;
     y*=antiAliasingScale;
-    
+
     float angles[text.length()];
     float widths[text.length()];
     float totalAngle = 0;
-    
+
     for (int i=0; i<text.length(); i++) {
         widths[i] = getCharacterWidth(text.at(i)) * letterSpacing;
         angles[i] = atan(widths[i]/radius);
         totalAngle += angles[i];
     }
-    
+
     switch (align) {
         case LEFT: break;
         case CENTER: ofRotateZ(ofRadToDeg(totalAngle/2)); break;
