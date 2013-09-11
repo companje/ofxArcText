@@ -3,13 +3,12 @@
 //--------------------------------------------------------------
 void testApp::setup() {
     ofBackground(0);
-    
+
     font.loadFont("vag.ttf",70);
     font.setLetterSpacing(1.1);
     font.align = font.CENTER;
-    
+
     text = "openFrameworks";
-    ofSetCircleResolution(64);
 }
 
 //--------------------------------------------------------------

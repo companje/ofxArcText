@@ -1,0 +1,11 @@
+*.exe
+*.zip
+*.mov
+*.mp4
+*.mpg
+*.dll
+*.ttf
+*.depend
+*.layout
+.DS_Store
+obj/
