@@ -1,4 +1,4 @@
-openFrameworks addon for displaying an ofTrueType font on a circular path
+openFrameworks addon for displaying an ofTrueTypeFont on a circular path
 created by Rick Companje for Globe4D - www.globe4d.com
 
 Usage:
