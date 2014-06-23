@@ -1,16 +1,11 @@
 #pragma once
 #include "ofMain.h"
+#include "ofxTrueTypeFontUC.h"
 
-class ofxArcText : public ofTrueTypeFont {
+class ofxArcText {
 public:
-
-    ofxArcText();
-
-    void loadFont(string filename, int fontsize, bool _bAntiAliased=true, bool _bFullCharacterSet=false, bool makeContours=false, float simplifyAmt=0.3, int dpi=0, int antiAliasingScale=2);
-    void drawString(string s, float x, float y, float radius, bool asShapes=false);
-
-    enum { LEFT, CENTER, RIGHT } align;
-    float antiAliasingScale;
+    enum Alignment { LEFT, CENTER, RIGHT };
+    void drawString(ofxTrueTypeFontUC &font, string s, float radius, Alignment align=CENTER, int nCopies=1);
 
 private:
     void translate(ofVec3f &a, ofVec3f &b, ofVec3f &c, ofVec3f &d, ofVec3f v);

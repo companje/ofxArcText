@@ -1,4 +1,8 @@
-openFrameworks addon for displaying an ofTrueTypeFont on a circular path
+This is the UNICODE branch. It uses ofxTrueTypeFontUC.
+
+-----
+
+openFrameworks addon for displaying an fonts on a circular path
 created by Rick Companje for Globe4D - www.globe4d.com
 
 Usage:
